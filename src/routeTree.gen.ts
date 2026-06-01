@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RoiRouteImport } from './routes/roi'
+import { Route as NudgesRouteImport } from './routes/nudges'
+import { Route as FingerprintRouteImport } from './routes/fingerprint'
+import { Route as AuditRouteImport } from './routes/audit'
+import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RoiRoute = RoiRouteImport.update({
+  id: '/roi',
+  path: '/roi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NudgesRoute = NudgesRouteImport.update({
+  id: '/nudges',
+  path: '/nudges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FingerprintRoute = FingerprintRouteImport.update({
+  id: '/fingerprint',
+  path: '/fingerprint',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertsRoute = AlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,90 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/audit': typeof AuditRoute
+  '/fingerprint': typeof FingerprintRoute
+  '/nudges': typeof NudgesRoute
+  '/roi': typeof RoiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/audit': typeof AuditRoute
+  '/fingerprint': typeof FingerprintRoute
+  '/nudges': typeof NudgesRoute
+  '/roi': typeof RoiRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/audit': typeof AuditRoute
+  '/fingerprint': typeof FingerprintRoute
+  '/nudges': typeof NudgesRoute
+  '/roi': typeof RoiRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/alerts' | '/audit' | '/fingerprint' | '/nudges' | '/roi'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/alerts' | '/audit' | '/fingerprint' | '/nudges' | '/roi'
+  id:
+    | '__root__'
+    | '/'
+    | '/alerts'
+    | '/audit'
+    | '/fingerprint'
+    | '/nudges'
+    | '/roi'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlertsRoute: typeof AlertsRoute
+  AuditRoute: typeof AuditRoute
+  FingerprintRoute: typeof FingerprintRoute
+  NudgesRoute: typeof NudgesRoute
+  RoiRoute: typeof RoiRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/roi': {
+      id: '/roi'
+      path: '/roi'
+      fullPath: '/roi'
+      preLoaderRoute: typeof RoiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nudges': {
+      id: '/nudges'
+      path: '/nudges'
+      fullPath: '/nudges'
+      preLoaderRoute: typeof NudgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fingerprint': {
+      id: '/fingerprint'
+      path: '/fingerprint'
+      fullPath: '/fingerprint'
+      preLoaderRoute: typeof FingerprintRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alerts': {
+      id: '/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +145,22 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlertsRoute: AlertsRoute,
+  AuditRoute: AuditRoute,
+  FingerprintRoute: FingerprintRoute,
+  NudgesRoute: NudgesRoute,
+  RoiRoute: RoiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
